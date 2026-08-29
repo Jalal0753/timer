@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 
 
 function Timer(){
-    const  TEMPS_INITIALE = 0.1 * 60; //en secondes (25 minutes)
-    const [seconds, setSeconds] = useState(TEMPS_INITIALE);
+    const [focusMinutes, setFocusMinutes] = useState(25);
+    const [seconds, setSeconds] = useState(focusMinutes * 60);
     const [isRunning, setIsRunning] = useState(false);
 
     useEffect(() =>{
@@ -36,8 +36,14 @@ function Timer(){
     
     const resetTimer = () => {
         setIsRunning(false);
-        setSeconds(TEMPS_INITIALE);
+        setSeconds(focusMinutes * 60);
     };
+
+    const changeFocusDuration = (minutes: number) => {
+        setFocusMinutes(minutes);
+        setSeconds(minutes * 60);
+        setIsRunning(false);
+    }
 
     return(
     <>
@@ -45,13 +51,27 @@ function Timer(){
             <h1>{formattedTime}</h1>
 
             <button onClick={toggleTimer}>
-                {isRunning ? "Pause" : seconds === TEMPS_INITIALE ? "Démarrer" : "Reprendre"}
+                {isRunning ? "Pause" : seconds === focusMinutes * 60 ? "Démarrer" : "Reprendre"}
             </button>
 
             <button onClick={resetTimer}>
                 Réinitialiser
             </button>
         </div>
+        <div>
+        <label>
+          Durée de concentration :
+          <input
+            type="number"
+            min="1"
+            value={focusMinutes}
+            onChange={(e) =>
+              changeFocusDuration(Number(e.target.value))
+            }
+          />
+          minutes
+        </label>
+      </div>
     </>
     );
 }
