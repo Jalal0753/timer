@@ -1,84 +1,138 @@
 import { useEffect, useState } from "react";
 import TodoList from "./todoList";
+import "./Timer.css";
 
-
-function Timer(){
+function Timer() {
     const [focusMinutes, setFocusMinutes] = useState(25);
-    const [seconds, setSeconds] = useState(focusMinutes * 60);
+    const [seconds, setSeconds] = useState(25 * 60);
     const [isRunning, setIsRunning] = useState(false);
 
-    useEffect(() =>{
-        if(!isRunning) return;
+    useEffect(() => {
+        if (!isRunning) return;
 
-        const interval = setInterval(() => { //setInterval permet de réaliser une action à chaque intervale de x ms, ici 1000
+        const interval = setInterval(() => {
             setSeconds((current) => {
-                if(current <= 1){
-                setIsRunning(false);
+                if (current <= 1) {
+                    setIsRunning(false);
                     return 0;
-            }else {
-                    return current-1;
+                }
 
-            }
-        });
+                return current - 1;
+            });
         }, 1000);
 
-        return () => clearInterval(interval); //il faut arrêter l'interval crée
+        return () => clearInterval(interval);
     }, [isRunning]);
 
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    const formattedTime = `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
 
-    //démarrer/pause/reprendre
+    const formattedTime = `${String(minutes).padStart(2, "0")}:${String(
+        remainingSeconds
+    ).padStart(2, "0")}`;
+
     const toggleTimer = () => {
-        setIsRunning(!isRunning);
+        if (seconds === 0) {
+            setSeconds(focusMinutes * 60);
+        }
+
+        setIsRunning((current) => !current);
     };
 
-    
     const resetTimer = () => {
         setIsRunning(false);
         setSeconds(focusMinutes * 60);
     };
 
-    const changeFocusDuration = (minutes: number) => {
-        if(minutes < 10){
-            minutes = 10;
-        }
-        setFocusMinutes(minutes);
-        setSeconds(minutes * 60);
+    const changeFocusDuration = (value: number) => {
+        const newDuration = Math.max(10, value || 10);
+
+        setFocusMinutes(newDuration);
+        setSeconds(newDuration * 60);
         setIsRunning(false);
-    }
+    };
 
-    return(
-    <>
-        <div>
-            <h1>{formattedTime}</h1>
+    return (
+        <main className="study-app">
+            <div className="desk-lamp-glow" />
 
-            <button onClick={toggleTimer}>
-                {isRunning ? "Pause" : seconds === focusMinutes * 60 ? "Démarrer" : "Reprendre"}
-            </button>
+            <section className="timer-card">
+                <div className="lamp">
+                    <div className="lamp-light" />
+                </div>
 
-            <button onClick={resetTimer}>
-                Réinitialiser
-            </button>
-        </div>
-        <div>
-        <label>
-          Durée de concentration :
-          <input
-            type="number"
-            min="10"
-            step={5}
-            value={focusMinutes}
-            onChange={(e) =>
-              changeFocusDuration(Number(e.target.value))
-            }
-          />
-          minutes
-        </label>
-        <TodoList/>
-      </div>
-    </>
+                <p className="eyebrow">SESSION DE CONCENTRATION</p>
+
+                <div className={`timer ${isRunning ? "timer-running" : ""}`}>
+                    {formattedTime}
+                </div>
+
+                <p className="timer-message">
+                    {isRunning
+                        ? ""
+                        : seconds === 0
+                        ? "Session terminée. Bien joué."
+                        : ""}
+                </p>
+
+                <div className="timer-actions">
+                    <button
+                        className="primary-button"
+                        onClick={toggleTimer}
+                    >
+                        <span className="button-icon">
+                            {isRunning ? "Ⅱ" : "▶"}
+                        </span>
+
+                        {isRunning
+                            ? "Pause"
+                            : seconds === focusMinutes * 60
+                            ? "Commencer"
+                            : seconds === 0
+                            ? "Recommencer"
+                            : "Reprendre"}
+                    </button>
+
+                    <button
+                        className="secondary-button"
+                        onClick={resetTimer}
+                    >
+                        Réinitialiser
+                    </button>
+                </div>
+
+                <div className="duration">
+                    <span>Durée</span>
+
+                    <div className="duration-control">
+                        <button
+                            onClick={() =>
+                                changeFocusDuration(focusMinutes - 5)
+                            }
+                            aria-label="Diminuer la durée"
+                        >
+                            −
+                        </button>
+
+                        <span>{focusMinutes} min</span>
+
+                        <button
+                            onClick={() =>
+                                changeFocusDuration(focusMinutes + 5)
+                            }
+                            aria-label="Augmenter la durée"
+                        >
+                            +
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section className="tasks-card">
+                <TodoList />
+            </section>
+
+        </main>
     );
 }
 

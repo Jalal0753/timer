@@ -7,7 +7,7 @@ function TodoList() {
     const addTask = () => {
         if (newTask.trim() === "") return;
 
-        setTasks([...tasks, newTask]);
+        setTasks([...tasks, newTask.trim()]);
         setNewTask("");
     };
 
@@ -16,35 +16,61 @@ function TodoList() {
     };
 
     return (
-        <div>
-            <h2>Mes tâches</h2>
+        <div className="todo">
+            <div className="todo-header">
+                <div>
+                    <p className="todo-label">À FAIRE</p>
+                    <h2>Mes tâches</h2>
+                </div>
 
-            <input
-                type="text"
-                placeholder="Ajouter une tâche..."
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                        addTask();
-                    }
-                }}
-            />
+                <span className="task-count">
+                    {tasks.length}
+                </span>
+            </div>
 
-            <button onClick={addTask}>
-                Ajouter
-            </button>
+            <div className="task-input-wrapper">
+                <input
+                    type="text"
+                    placeholder="Ajouter une tâche..."
+                    value={newTask}
+                    onChange={(e) => setNewTask(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            addTask();
+                        }
+                    }}
+                />
 
-            <ul>
-                {tasks.map((task, index) => (
-                    <li key={index}>
-                        {task}
+                <button onClick={addTask} aria-label="Ajouter la tâche">
+                    +
+                </button>
+            </div>
 
-                        <button onClick={() => deleteTask(index)}>
-                            Supprimer
-                        </button>
+            <ul className="task-list">
+                {tasks.length === 0 ? (
+                    <li className="empty-tasks">
+                        <span>✦</span>
+                        Rien à faire pour l’instant.
                     </li>
-                ))}
+                ) : (
+                    tasks.map((task, index) => (
+                        <li className="task" key={index}>
+                            <span className="task-dot" />
+
+                            <span className="task-text">
+                                {task}
+                            </span>
+
+                            <button
+                                className="delete-task"
+                                onClick={() => deleteTask(index)}
+                                aria-label={`Supprimer ${task}`}
+                            >
+                                ×
+                            </button>
+                        </li>
+                    ))
+                )}
             </ul>
         </div>
     );
