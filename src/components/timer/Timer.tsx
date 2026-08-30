@@ -41,6 +41,9 @@ function Timer(){
     };
 
     const changeFocusDuration = (minutes: number) => {
+        if(minutes < 10){
+            minutes = 10;
+        }
         setFocusMinutes(minutes);
         setSeconds(minutes * 60);
         setIsRunning(false);
@@ -64,7 +67,8 @@ function Timer(){
           Durée de concentration :
           <input
             type="number"
-            min="1"
+            min="10"
+            step={5}
             value={focusMinutes}
             onChange={(e) =>
               changeFocusDuration(Number(e.target.value))
