@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import TodoList from "./todoList";
 
 
 function Timer(){
@@ -71,6 +72,7 @@ function Timer(){
           />
           minutes
         </label>
+        <TodoList/>
       </div>
     </>
     );
