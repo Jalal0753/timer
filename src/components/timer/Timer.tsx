@@ -39,52 +39,63 @@ function Timer() {
         if (!isRunning) return;
 
         const interval = setInterval(() => {
-            setSeconds((current) => {
-                if (current > 1) {
-                    return current - 1;
+            setSeconds((currentSeconds) => {
+                if (currentSeconds > 1) {
+                    return currentSeconds - 1;
                 }
 
-                if (mode === "pomodoro") {
-                    if (pomodoroPhase === "focus") {
-                        const newSession = pomodoroSession + 1;
-                        setPomodoroSession(newSession);
-                        if (newSession === 4) {
-                            setPomodoroPhase("longBreak");
-                            return pomodoroLongBreakMinutes * 60;
-                        }
-
-                        setPomodoroPhase("break");
-                        return pomodoroBreakMinutes * 60;
-                    }
-
-                    if (pomodoroPhase === "longBreak") {
-                        setPomodoroSession(0);
-                        setPomodoroPhase("focus");
-                        return pomodoroFocusMinutes * 60;
-                    }
-
-
-                    setPomodoroPhase("focus");
-                    return pomodoroFocusMinutes * 60;
-                }
-
-                setIsRunning(false);
                 return 0;
             });
         }, 1000);
 
         return () => clearInterval(interval);
+    }, [isRunning]);
+
+    useEffect(() => {
+        if (!isRunning || seconds !== 0 || mode !== "pomodoro") {
+            return;
+        }
+
+        if (pomodoroPhase === "focus") {
+            const newSession = pomodoroSession + 1;
+
+            setPomodoroSession(newSession);
+
+            if (newSession >= 4) {
+                setPomodoroPhase("longBreak");
+                setSeconds(pomodoroLongBreakMinutes * 60);
+                return;
+            }
+
+            setPomodoroPhase("break");
+            setSeconds(pomodoroBreakMinutes * 60);
+            return;
+        }
+
+        if (pomodoroPhase === "break") {
+            setPomodoroPhase("focus");
+            setSeconds(pomodoroFocusMinutes * 60);
+            return;
+        }
+
+        if (pomodoroPhase === "longBreak") {
+            setPomodoroSession(0);
+            setPomodoroPhase("focus");
+            setSeconds(pomodoroFocusMinutes * 60);
+        }
     }, [
+        seconds,
         isRunning,
         mode,
         pomodoroPhase,
+        pomodoroSession,
         pomodoroFocusMinutes,
         pomodoroBreakMinutes,
-        pomodoroLongBreakMinutes,
-        pomodoroSession
+        pomodoroLongBreakMinutes
     ]);
 
-    //affichage du temps
+    
+
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
 
@@ -92,25 +103,18 @@ function Timer() {
         remainingSeconds
     ).padStart(2, "0")}`;
 
-    //changement de mode
     const changeMode = (newMode: TimerMode) => {
         setIsRunning(false);
         setMode(newMode);
+        setPomodoroSession(0);
+        setPomodoroPhase("focus");
 
         if (newMode === "focus") {
-            setPomodoroPhase("focus");
             setSeconds(focusMinutes * 60);
-        }
-
-        if (newMode === "pomodoro") {
-            setPomodoroPhase("focus");
+        } else {
             setSeconds(pomodoroFocusMinutes * 60);
         }
     };
-
-    // -------------------------
-    // START / PAUSE / RESUME
-    // -------------------------
 
     const toggleTimer = () => {
         if (seconds === 0) {
@@ -120,24 +124,17 @@ function Timer() {
         setIsRunning((current) => !current);
     };
 
-    // -------------------------
-    // RESET
-    // -------------------------
-
     const resetTimer = () => {
         setIsRunning(false);
 
         if (mode === "focus") {
             setSeconds(focusMinutes * 60);
         } else {
+            setPomodoroSession(0);
             setPomodoroPhase("focus");
             setSeconds(pomodoroFocusMinutes * 60);
         }
     };
-
-    // -------------------------
-    // DURÉE FOCUS
-    // -------------------------
 
     const changeFocusDuration = (value: number) => {
         const newDuration = Math.max(10, value || 10);
@@ -149,7 +146,6 @@ function Timer() {
             setIsRunning(false);
         }
     };
-
 
     const changePomodoroFocusDuration = (value: number) => {
         const newDuration = Math.max(1, value || 1);
@@ -165,35 +161,33 @@ function Timer() {
     const changePomodoroBreakDuration = (value: number, isLong: boolean) => {
         const newDuration = Math.max(1, value || 1);
 
-        if (!isLong) {
-            setPomodoroBreakMinutes(newDuration);
+        if (isLong) {
+            setPomodoroLongBreakMinutes(newDuration);
 
-            if (mode === "pomodoro" && pomodoroPhase === "break") {
+            if (mode === "pomodoro" && pomodoroPhase === "longBreak") {
                 setSeconds(newDuration * 60);
                 setIsRunning(false);
             }
+
             return;
         }
 
-        setPomodoroLongBreakMinutes(newDuration);
-        if (mode === "pomodoro" && pomodoroPhase === "longBreak") {
+        setPomodoroBreakMinutes(newDuration);
+
+        if (mode === "pomodoro" && pomodoroPhase === "break") {
             setSeconds(newDuration * 60);
             setIsRunning(false);
         }
-        return;
     };
-
 
     return (
         <main className="study-app">
             <div className="desk-lamp-glow" />
 
             <section className="timer-card">
-
                 <div className="lamp">
                     <div className="lamp-light" />
                 </div>
-
 
                 <ToggleButtonGroup
                     value={mode}
@@ -213,22 +207,20 @@ function Timer() {
                         Pomodoro
                     </ToggleButton>
                 </ToggleButtonGroup>
+
                 <p className="eyebrow">
                     {mode === "focus"
                         ? "SESSION DE CONCENTRATION"
                         : pomodoroPhase === "focus"
-                            ? "POMODORO · CONCENTRATION"
-                            : pomodoroPhase === "break" ? "POMODORO · PAUSE" : "POMODORO · LONGUE PAUSE"}
+                            ? `POMODORO · CONCENTRATION · ${pomodoroSession + 1}/4`
+                            : pomodoroPhase === "break"
+                                ? "POMODORO · PAUSE"
+                                : "POMODORO · LONGUE PAUSE"}
                 </p>
 
-
-                <div
-                    className={`timer ${isRunning ? "timer-running" : ""
-                        }`}
-                >
+                <div className={`timer ${isRunning ? "timer-running" : ""}`}>
                     {formattedTime}
                 </div>
-
 
                 <p className="timer-message">
                     {!isRunning && seconds === 0
@@ -236,9 +228,7 @@ function Timer() {
                         : ""}
                 </p>
 
-
                 <div className="timer-actions">
-
                     <button
                         className="primary-button"
                         onClick={toggleTimer}
@@ -262,9 +252,7 @@ function Timer() {
                     >
                         Réinitialiser
                     </button>
-
                 </div>
-
 
                 {mode === "focus" && (
                     <div className="duration">
@@ -273,9 +261,7 @@ function Timer() {
                         <div className="duration-control">
                             <button
                                 onClick={() =>
-                                    changeFocusDuration(
-                                        focusMinutes - 5
-                                    )
+                                    changeFocusDuration(focusMinutes - 5)
                                 }
                             >
                                 −
@@ -285,9 +271,7 @@ function Timer() {
 
                             <button
                                 onClick={() =>
-                                    changeFocusDuration(
-                                        focusMinutes + 5
-                                    )
+                                    changeFocusDuration(focusMinutes + 5)
                                 }
                             >
                                 +
@@ -296,10 +280,8 @@ function Timer() {
                     </div>
                 )}
 
-
                 {mode === "pomodoro" && (
                     <div className="pomodoro-settings">
-
                         <div className="duration">
                             <span>Concentration</span>
 
@@ -337,7 +319,8 @@ function Timer() {
                                 <button
                                     onClick={() =>
                                         changePomodoroBreakDuration(
-                                            pomodoroBreakMinutes - 1, false
+                                            pomodoroBreakMinutes - 1,
+                                            false
                                         )
                                     }
                                 >
@@ -351,7 +334,8 @@ function Timer() {
                                 <button
                                     onClick={() =>
                                         changePomodoroBreakDuration(
-                                            pomodoroBreakMinutes + 1, false
+                                            pomodoroBreakMinutes + 1,
+                                            false
                                         )
                                     }
                                 >
@@ -367,7 +351,8 @@ function Timer() {
                                 <button
                                     onClick={() =>
                                         changePomodoroBreakDuration(
-                                            pomodoroLongBreakMinutes - 1, true
+                                            pomodoroLongBreakMinutes - 1,
+                                            true
                                         )
                                     }
                                 >
@@ -381,7 +366,8 @@ function Timer() {
                                 <button
                                     onClick={() =>
                                         changePomodoroBreakDuration(
-                                            pomodoroLongBreakMinutes + 1, true
+                                            pomodoroLongBreakMinutes + 1,
+                                            true
                                         )
                                     }
                                 >
@@ -389,7 +375,6 @@ function Timer() {
                                 </button>
                             </div>
                         </div>
-
                     </div>
                 )}
             </section>
@@ -402,3 +387,4 @@ function Timer() {
 }
 
 export default Timer;
+
