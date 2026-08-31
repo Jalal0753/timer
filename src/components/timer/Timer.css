@@ -25,46 +25,29 @@ button {
     cursor: pointer;
 }
 
-/* =========================
-   APP
-========================= */
-
+/* ========================= APP ========================= */
 .study-app {
     position: relative;
     min-height: 100vh;
     padding: 70px 24px 45px;
-
     display: flex;
-    flex-direction: column;
-    align-items: center;
-
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
     overflow: hidden;
-
-    background:
-        radial-gradient(
-            circle at 50% 22%,
-            rgba(202, 159, 91, 0.075),
-            transparent 32%
-        ),
-        #151412;
+    background: radial-gradient(circle at 50% 22%, rgba(202, 159, 91, 0.075), transparent 32%), #151412;
 }
 
-/*
-    Petit halo très doux derrière la "lampe".
-*/
+/* Petit halo très doux derrière la "lampe". */
 .desk-lamp-glow {
     position: absolute;
-
     width: 520px;
     height: 520px;
-
     top: -230px;
-
     border-radius: 50%;
-
     background: rgba(215, 169, 101, 0.035);
     filter: blur(60px);
-
     pointer-events: none;
 }
 
@@ -75,18 +58,12 @@ button {
 .timer-switch .MuiToggleButton-root {
     border: 0;
     border-radius: 9px;
-
     padding: 8px 15px;
-
     color: #777166;
-
     background: transparent;
-
     font-size: 11px;
     font-weight: 500;
-
     text-transform: none;
-
     transition: all 180ms ease;
 }
 
@@ -97,12 +74,8 @@ button {
 
 .timer-switch .MuiToggleButton-root.Mui-selected {
     color: #d8c8b2;
-
     background: rgba(213, 174, 118, 0.10);
-
-    box-shadow:
-        inset 0 0 0 1px rgba(213, 174, 118, 0.06),
-        0 2px 8px rgba(0, 0, 0, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(213, 174, 118, 0.06), 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .timer-switch .MuiToggleButton-root.Mui-selected:hover {
@@ -110,123 +83,78 @@ button {
     background: rgba(213, 174, 118, 0.14);
 }
 
-/* =========================
-   TIMER
-========================= */
-
+/* ========================= TIMER ========================= */
 .timer-card {
     position: relative;
     z-index: 1;
-
     width: min(100%, 560px);
-
+    flex: 0 1 560px;
     display: flex;
     flex-direction: column;
     align-items: center;
-
     padding: 30px 30px 34px;
-
     border: 1px solid rgba(255, 244, 220, 0.055);
     border-radius: 28px;
-
     background: rgba(28, 27, 24, 0.78);
-
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.28),
-        0 0 80px rgba(207, 157, 83, 0.025);
-
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28), 0 0 80px rgba(207, 157, 83, 0.025);
     backdrop-filter: blur(15px);
 }
 
-/* =========================
-   LAMPE
-========================= */
-
+/* ========================= LAMPE ========================= */
 .lamp {
     position: relative;
-
     width: 58px;
     height: 32px;
-
     margin-bottom: 28px;
-
     border-radius: 50% 50% 40% 40%;
-
     background: #d2a365;
-
     opacity: 0.85;
-
-    box-shadow:
-        0 4px 15px rgba(218, 165, 91, 0.25),
-        0 0 45px rgba(218, 165, 91, 0.12);
+    box-shadow: 0 4px 15px rgba(218, 165, 91, 0.25), 0 0 45px rgba(218, 165, 91, 0.12);
 }
 
 .lamp::before {
     content: "";
-
     position: absolute;
-
     left: 50%;
     bottom: -8px;
-
     width: 8px;
     height: 9px;
-
     transform: translateX(-50%);
-
     border-radius: 50%;
-
     background: #a87a43;
 }
 
 .lamp-light {
     position: absolute;
-
     left: 50%;
     bottom: -34px;
-
     width: 150px;
     height: 65px;
-
     transform: translateX(-50%);
-
     background: rgba(219, 168, 98, 0.055);
-
     clip-path: polygon(30% 0, 70% 0, 100% 100%, 0 100%);
-
     filter: blur(5px);
 }
 
-/* =========================
-   TEXT
-========================= */
-
+/* ========================= TEXT ========================= */
 .eyebrow,
 .todo-label {
     margin: 0;
-
     color: #988d7d;
-
     font-size: 10px;
     font-weight: 600;
-
     letter-spacing: 0.19em;
 }
 
 .timer {
     margin-top: 13px;
-
     font-family: "Playfair Display", serif;
-
     font-size: clamp(78px, 17vw, 126px);
     font-weight: 400;
     line-height: 0.95;
     letter-spacing: -0.045em;
-
     color: #eee5d7;
-
     text-shadow: 0 0 30px rgba(220, 174, 104, 0.045);
-
     font-variant-numeric: tabular-nums;
 }
 
@@ -236,21 +164,14 @@ button {
 
 .timer-message {
     max-width: 360px;
-
     margin: 19px 0 28px;
-
     color: #8e877c;
-
     font-size: 13px;
     line-height: 1.6;
-
     text-align: center;
 }
 
-/* =========================
-   BUTTONS
-========================= */
-
+/* ========================= BUTTONS ========================= */
 .timer-actions {
     display: flex;
     align-items: center;
@@ -261,35 +182,24 @@ button {
 .secondary-button {
     border: 0;
     border-radius: 12px;
-
-    transition:
-        transform 180ms ease,
-        background 180ms ease,
-        box-shadow 180ms ease;
+    transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
 }
 
 .primary-button {
     display: flex;
     align-items: center;
     gap: 9px;
-
     padding: 12px 19px;
-
     color: #28231b;
-
     background: #d5ae76;
-
     font-size: 13px;
     font-weight: 600;
-
     box-shadow: 0 7px 24px rgba(203, 157, 89, 0.12);
 }
 
 .primary-button:hover {
     transform: translateY(-1px);
-
     background: #dfbb87;
-
     box-shadow: 0 10px 28px rgba(203, 157, 89, 0.17);
 }
 
@@ -303,11 +213,8 @@ button {
 
 .secondary-button {
     padding: 12px 16px;
-
     color: #91897c;
-
     background: rgba(255, 255, 255, 0.035);
-
     font-size: 12px;
 }
 
@@ -316,24 +223,16 @@ button {
     background: rgba(255, 255, 255, 0.065);
 }
 
-/* =========================
-   DURATION
-========================= */
-
+/* ========================= DURATION ========================= */
 .duration {
     width: 100%;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     margin-top: 34px;
     padding-top: 20px;
-
     border-top: 1px solid rgba(255, 255, 255, 0.045);
-
     color: #777166;
-
     font-size: 11px;
 }
 
@@ -341,20 +240,16 @@ button {
     display: flex;
     align-items: center;
     gap: 12px;
-
     color: #aaa193;
 }
 
 .duration-control button {
     width: 25px;
     height: 25px;
-
     border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 50%;
-
     color: #a49a8b;
     background: rgba(255, 255, 255, 0.025);
-
     transition: background 150ms ease;
 }
 
@@ -362,25 +257,71 @@ button {
     background: rgba(255, 255, 255, 0.07);
 }
 
-/* =========================
-   TODO
-========================= */
+/* ========================= POMODORO SETTINGS ========================= */
+.pomodoro-settings {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 24px;
+    padding-top: 16px;
+}
 
+.pomodoro-setting {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 30px;
+    color: #777166;
+    font-size: 11px;
+}
+
+.pomodoro-setting .duration-control {
+    gap: 12px;
+}
+
+.pomodoro-setting .duration-control button {
+    width: 25px;
+    height: 25px;
+}
+
+.pomodoro-setting-label {
+    color: #8e877c;
+    font-size: 11px;
+}
+
+.pomodoro-setting-value {
+    min-width: 32px;
+    color: #aaa193;
+    font-size: 11px;
+    text-align: center;
+}
+
+/* Variante si les settings Pomodoro sont regroupés dans une grille : elle conserve le même gap horizontal que le contrôle de durée classique. */
+.pomodoro-settings-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 12px;
+    row-gap: 8px;
+}
+
+.pomodoro-settings-grid .pomodoro-setting {
+    min-width: 0;
+}
+
+/* ========================= TODO ========================= */
 .tasks-card {
     position: relative;
     z-index: 1;
-
-    width: min(100%, 560px);
-
-    margin-top: 18px;
-
+    width: min(100%, 420px);
+    flex: 0 1 420px;
+    margin-top: 0;
     padding: 26px;
-
     border: 1px solid rgba(255, 244, 220, 0.045);
     border-radius: 22px;
-
     background: rgba(25, 24, 22, 0.72);
-
     backdrop-filter: blur(12px);
 }
 
@@ -388,17 +329,13 @@ button {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     margin-bottom: 18px;
 }
 
 .todo h2 {
     margin: 5px 0 0;
-
     font-family: "Playfair Display", serif;
-
     color: #ddd3c4;
-
     font-size: 24px;
     font-weight: 400;
 }
@@ -406,21 +343,15 @@ button {
 .task-count {
     min-width: 27px;
     height: 27px;
-
     display: grid;
     place-items: center;
-
     border-radius: 50%;
-
     color: #a79b89;
-
     background: rgba(255, 255, 255, 0.04);
-
     font-size: 11px;
 }
 
 /* Input */
-
 .task-input-wrapper {
     display: flex;
     gap: 8px;
@@ -429,19 +360,13 @@ button {
 .task-input-wrapper input {
     min-width: 0;
     flex: 1;
-
     padding: 12px 14px;
-
     border: 1px solid rgba(255, 255, 255, 0.055);
     border-radius: 11px;
-
     outline: none;
-
     color: #d8d0c4;
     background: rgba(255, 255, 255, 0.025);
-
     font-size: 13px;
-
     transition: border 180ms ease, background 180ms ease;
 }
 
@@ -454,54 +379,41 @@ button {
     background: rgba(255, 255, 255, 0.04);
 }
 
-.task-input-wrapper > button {
+.task-input-wrapper>button {
     width: 42px;
-
     border: 0;
     border-radius: 11px;
-
     color: #29231a;
     background: #c8a06b;
-
     font-size: 20px;
     font-weight: 400;
-
     transition: transform 150ms ease, background 150ms ease;
 }
 
-.task-input-wrapper > button:hover {
+.task-input-wrapper>button:hover {
     transform: translateY(-1px);
     background: #d5ae76;
 }
 
 /* Tasks */
-
 .task-list {
     display: flex;
     flex-direction: column;
     gap: 5px;
-
     padding: 0;
     margin: 18px 0 0;
-
     list-style: none;
 }
 
 .task {
     min-height: 42px;
-
     display: flex;
     align-items: center;
     gap: 11px;
-
     padding: 7px 8px 7px 10px;
-
     border-radius: 10px;
-
     color: #bcb3a5;
-
     background: transparent;
-
     transition: background 160ms ease;
 }
 
@@ -512,18 +424,14 @@ button {
 .task-dot {
     width: 7px;
     height: 7px;
-
     flex: 0 0 auto;
-
     border: 1px solid #8d795e;
     border-radius: 50%;
 }
 
 .task-text {
     flex: 1;
-
     overflow: hidden;
-
     font-size: 13px;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -532,21 +440,13 @@ button {
 .delete-task {
     width: 27px;
     height: 27px;
-
     border: 0;
     border-radius: 7px;
-
     color: #625d55;
     background: transparent;
-
     font-size: 18px;
-
     opacity: 0;
-
-    transition:
-        opacity 150ms ease,
-        color 150ms ease,
-        background 150ms ease;
+    transition: opacity 150ms ease, color 150ms ease, background 150ms ease;
 }
 
 .task:hover .delete-task {
@@ -563,11 +463,8 @@ button {
     align-items: center;
     justify-content: center;
     gap: 8px;
-
     padding: 15px;
-
     color: #625e57;
-
     font-size: 12px;
 }
 
@@ -575,29 +472,35 @@ button {
     color: #9c7a4e;
 }
 
-/* =========================
-   FOOTER
-========================= */
-
+/* ========================= FOOTER ========================= */
 .quiet-note {
     position: relative;
     z-index: 1;
-
     max-width: 430px;
-
     margin: 25px 0 0;
-
     color: #514e48;
-
     font-size: 11px;
     line-height: 1.6;
-
     text-align: center;
 }
 
-/* =========================
-   MOBILE
-========================= */
+/* ========================= MOBILE ========================= */
+@media (max-width: 900px) {
+    .study-app {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .timer-card,
+    .tasks-card {
+        width: min(100%, 560px);
+        flex: none;
+    }
+
+    .tasks-card {
+        margin-top: 0;
+    }
+}
 
 @media (max-width: 520px) {
     .study-app {
@@ -626,5 +529,16 @@ button {
 
     .timer {
         font-size: 78px;
+    }
+
+    .pomodoro-settings {
+        gap: 6px;
+        margin-top: 20px;
+        padding-top: 14px;
+    }
+
+    .pomodoro-settings-grid {
+        column-gap: 12px;
+        row-gap: 6px;
     }
 }

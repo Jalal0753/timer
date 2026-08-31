@@ -10,9 +10,9 @@ function Timer() {
     const [mode, setMode] = useState<TimerMode>("focus");
     const [focusMinutes, setFocusMinutes] = useState(25);
 
-    const [pomodoroFocusMinutes, setPomodoroFocusMinutes] = useState(0.1);
-    const [pomodoroBreakMinutes, setPomodoroBreakMinutes] = useState(0.1);
-    const [pomodoroLongBreakMinutes, setPomodoroLongBreakMinutes] = useState(0.2);
+    const [pomodoroFocusMinutes, setPomodoroFocusMinutes] = useState(25);
+    const [pomodoroBreakMinutes, setPomodoroBreakMinutes] = useState(5);
+    const [pomodoroLongBreakMinutes, setPomodoroLongBreakMinutes] = useState(15);
     const [pomodoroPhase, setPomodoroPhase] = useState<PomodoroPhase>("focus");
     const [pomodoroSession, setPomodoroSession] = useState(0);
 
@@ -82,6 +82,7 @@ function Timer() {
             setPomodoroSession(0);
             setPomodoroPhase("focus");
             setSeconds(pomodoroFocusMinutes * 60);
+            setIsRunning(false);
         }
     }, [
         seconds,
