@@ -68,6 +68,48 @@ button {
     pointer-events: none;
 }
 
+.timer-switch {
+    margin-bottom: 24px;
+}
+
+.timer-switch .MuiToggleButton-root {
+    border: 0;
+    border-radius: 9px;
+
+    padding: 8px 15px;
+
+    color: #777166;
+
+    background: transparent;
+
+    font-size: 11px;
+    font-weight: 500;
+
+    text-transform: none;
+
+    transition: all 180ms ease;
+}
+
+.timer-switch .MuiToggleButton-root:hover {
+    color: #aaa193;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.timer-switch .MuiToggleButton-root.Mui-selected {
+    color: #d8c8b2;
+
+    background: rgba(213, 174, 118, 0.10);
+
+    box-shadow:
+        inset 0 0 0 1px rgba(213, 174, 118, 0.06),
+        0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.timer-switch .MuiToggleButton-root.Mui-selected:hover {
+    color: #d8c8b2;
+    background: rgba(213, 174, 118, 0.14);
+}
+
 /* =========================
    TIMER
 ========================= */
