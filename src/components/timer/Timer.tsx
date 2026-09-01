@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import TodoList from "./todoList";
 import "./Timer.css";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 
 type TimerMode = "focus" | "pomodoro";
 type PomodoroPhase = "focus" | "break" | "longBreak";
@@ -386,13 +388,25 @@ function Timer() {
             <section className="tasks-card">
                 <TodoList />
             </section>
+            <nav className="floating-nav" aria-label="Navigation secondaire">
+                <button
+                    className="floating-nav-button"
+                    onClick={() => navigate("settings")}
+                    aria-label="Paramètres"
+                >
+                    <SettingsOutlinedIcon />
+                    <span>Paramètres</span>
+                </button>
 
-            <button onClick={() => navigate("settings")}>
-                ⚙️
-            </button>
-            <button onClick={() => navigate("stats")}>
-                📊
-            </button>
+                <button
+                    className="floating-nav-button"
+                    onClick={() => navigate("stats")}
+                    aria-label="Statistiques"
+                >
+                    <BarChartOutlinedIcon />
+                    <span>Statistiques</span>
+                </button>
+            </nav>
         </main>
     );
 }
