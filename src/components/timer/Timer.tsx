@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import TodoList from "./todoList";
 import "./Timer.css";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Outlet, useNavigate } from "react-router-dom";
 
 type TimerMode = "focus" | "pomodoro";
 type PomodoroPhase = "focus" | "break" | "longBreak";
 
 function Timer() {
+    const navigate = useNavigate();
+
     const [mode, setMode] = useState<TimerMode>("focus");
     const [focusMinutes, setFocusMinutes] = useState(25);
 
@@ -383,6 +386,10 @@ function Timer() {
             <section className="tasks-card">
                 <TodoList />
             </section>
+
+            <button onClick={() => navigate("settings")}>
+                ⚙️
+            </button>
         </main>
     );
 }
