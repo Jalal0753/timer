@@ -6,6 +6,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Settings from "./components/settings/Settings.tsx";
 import Timer from "./components/timer/Timer.tsx";
 import App from "./components/App.tsx";
+import Statistics from "./components/statistics/Statistics.tsx";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: "settings",
         element: <Settings/>,
+      },
+      {
+        path: "stats",
+        element: <Statistics/>,
       },
     ],
   },

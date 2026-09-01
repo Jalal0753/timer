@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-function Settings(){
+function Statistics(){
     const navigate = useNavigate();
     return(
         <>
@@ -11,4 +11,4 @@ function Settings(){
     );
 }
 
-export default Settings;
+export default Statistics;

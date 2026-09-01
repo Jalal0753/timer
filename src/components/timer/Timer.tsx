@@ -390,6 +390,9 @@ function Timer() {
             <button onClick={() => navigate("settings")}>
                 ⚙️
             </button>
+            <button onClick={() => navigate("stats")}>
+                📊
+            </button>
         </main>
     );
 }
