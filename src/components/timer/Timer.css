@@ -542,3 +542,126 @@ button {
         row-gap: 6px;
     }     
 }
+
+.category-selector {
+    width: 100%;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.045);
+}
+
+.category-selector label {
+    display: block;
+    margin-bottom: 8px;
+    color: #777166;
+    font-size: 11px;
+}
+
+.category-selector select {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+
+    outline: none;
+    color: #aaa193;
+    background: rgba(255, 255, 255, 0.025);
+
+    font-family: "DM Sans", sans-serif;
+    font-size: 12px;
+
+    cursor: pointer;
+
+    transition:
+        border-color 180ms ease;
+}
+
+.category-selector select:hover {
+    background: rgba(255, 255, 255, 0.045);
+}
+
+.category-selector select:focus {
+    border-color: rgba(213, 174, 118, 0.35);
+}
+
+.category-selector select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.category-selector option {
+    background: #1c1a17;
+    color: #e9e1d3;
+}
+
+/* ========================= FLOATING NAV ========================= */
+
+.floating-nav {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 10;
+
+    display: flex;
+    gap: 4px;
+    padding: 5px;
+
+    border: 1px solid rgba(255, 244, 220, 0.055);
+    border-radius: 14px;
+
+    background: rgba(28, 27, 24, 0.88);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+
+    backdrop-filter: blur(12px);
+}
+
+.floating-nav-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 9px 12px;
+
+    border: 0;
+    border-radius: 10px;
+
+    color: #777166;
+    background: transparent;
+
+    font-size: 11px;
+    transition:
+        color 180ms ease,
+        background 180ms ease;
+}
+
+.floating-nav-button svg {
+    font-size: 17px;
+}
+
+.floating-nav-button:hover {
+    color: #d5ae76;
+    background: rgba(213, 174, 118, 0.08);
+}
+
+.floating-nav-button:active {
+    background: rgba(213, 174, 118, 0.12);
+}
+
+/* ========================= MOBILE ========================= */
+
+@media (max-width: 520px) {
+    .floating-nav {
+        right: 14px;
+        bottom: 14px;
+        left: 14px;
+
+        justify-content: center;
+    }
+
+    .floating-nav-button {
+        flex: 1;
+        justify-content: center;
+    }
+}

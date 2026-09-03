@@ -237,19 +237,6 @@ function Statistics() {
                 >
                     ×
                 </button>
-
-                <div>
-                    <p className="eyebrow">
-                        VOTRE PRODUCTIVITÉ
-                    </p>
-
-                    <h1>Statistiques</h1>
-
-                    <p className="stats-subtitle">
-                        Comprenez votre rythme de travail
-                        et suivez vos progrès.
-                    </p>
-                </div>
             </header>
 
             {/* PÉRIODE */}

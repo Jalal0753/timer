@@ -301,38 +301,7 @@ function Timer() {
                     </ToggleButton>
                 </ToggleButtonGroup>
 
-                {/* CATÉGORIE */}
-                <div className="category-selector">
-                    <label htmlFor="category">
-                        Catégorie
-                    </label>
-
-                    <select
-                        id="category"
-                        value={categoryId ?? ""}
-                        onChange={(e) => {
-                            const value = e.target.value;
-
-                            setCategoryId(
-                                value === "" ? null : Number(value)
-                            );
-                        }}
-                        disabled={isRunning}
-                    >
-                        <option value="">
-                            Sans catégorie
-                        </option>
-
-                        {categories.map((category) => (
-                            <option
-                                key={category.id}
-                                value={category.id}
-                            >
-                                {category.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                
 
                 <p className="eyebrow">
                     {mode === "focus"
@@ -513,7 +482,36 @@ function Timer() {
                         </div>
                     </div>
                 )}
+                <div className="category-selector">
+
+                    <select
+                        id="category"
+                        value={categoryId ?? ""}
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            setCategoryId(
+                                value === "" ? null : Number(value)
+                            );
+                        }}
+                        disabled={isRunning}
+                    >
+                        <option value="">
+                            Sans catégorie
+                        </option>
+
+                        {categories.map((category) => (
+                            <option
+                                key={category.id}
+                                value={category.id}
+                            >
+                                {category.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </section>
+
 
             <section className="tasks-card">
                 <TodoList />
