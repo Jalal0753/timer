@@ -31,7 +31,6 @@ function Timer() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [categoryId, setCategoryId] = useState<number | null>(null);
 
-    // Temps restant au moment où le bloc de travail a commencé
     const [sessionStartSeconds, setSessionStartSeconds] =
         useState<number | null>(null);
 
@@ -85,14 +84,8 @@ function Timer() {
 
         return () => clearInterval(interval);
     }, [isRunning]);
-
-    // Quand le timer arrive à 0
-    useEffect(() => {
-        if (!isRunning || seconds !== 0) {
-            return;
-        }
-
-        const finishTimer = async () => {
+    
+    const finishTimer = async () => {
             await saveCurrentSession();
 
             setSessionStartSeconds(null);
@@ -141,7 +134,12 @@ function Timer() {
                 setSessionStartSeconds(null);
             }
         };
-
+        
+    // Quand le timer arrive à 0
+    useEffect(() => {
+        if (!isRunning || seconds !== 0) {
+            return;
+        }
         finishTimer();
     }, [
         seconds,
