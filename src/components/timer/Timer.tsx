@@ -5,6 +5,9 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
+import type { Category } from "../../types";
+import { getCategories } from "../../services/category_service";
+import { addSession } from "../../services/session_service";
 
 type TimerMode = "focus" | "pomodoro";
 type PomodoroPhase = "focus" | "break" | "longBreak";
@@ -18,11 +21,23 @@ function Timer() {
     const [pomodoroFocusMinutes, setPomodoroFocusMinutes] = useState(25);
     const [pomodoroBreakMinutes, setPomodoroBreakMinutes] = useState(5);
     const [pomodoroLongBreakMinutes, setPomodoroLongBreakMinutes] = useState(15);
-    const [pomodoroPhase, setPomodoroPhase] = useState<PomodoroPhase>("focus");
+    const [pomodoroPhase, setPomodoroPhase] =
+        useState<PomodoroPhase>("focus");
     const [pomodoroSession, setPomodoroSession] = useState(0);
 
     const [seconds, setSeconds] = useState(25 * 60);
     const [isRunning, setIsRunning] = useState(false);
+
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [categoryId, setCategoryId] = useState<number | null>(null);
+
+    // Temps restant au moment où le bloc de travail a commencé
+    const [sessionStartSeconds, setSessionStartSeconds] =
+        useState<number | null>(null);
+
+    useEffect(() => {
+        getCategories().then(setCategories);
+    }, []);
 
     const getCurrentDuration = () => {
         if (mode === "focus") {
@@ -38,6 +53,21 @@ function Timer() {
         }
 
         return pomodoroLongBreakMinutes * 60;
+    };
+
+    // Sauvegarde le bloc de travail actuel
+    const saveCurrentSession = async () => {
+        if (sessionStartSeconds === null) {
+            return;
+        }
+
+        const duration = sessionStartSeconds - seconds;
+
+        if (duration <= 0) {
+            return;
+        }
+
+        await addSession(categoryId, duration);
     };
 
     useEffect(() => {
@@ -56,39 +86,63 @@ function Timer() {
         return () => clearInterval(interval);
     }, [isRunning]);
 
+    // Quand le timer arrive à 0
     useEffect(() => {
-        if (!isRunning || seconds !== 0 || mode !== "pomodoro") {
+        if (!isRunning || seconds !== 0) {
             return;
         }
 
-        if (pomodoroPhase === "focus") {
-            const newSession = pomodoroSession + 1;
+        const finishTimer = async () => {
+            await saveCurrentSession();
 
-            setPomodoroSession(newSession);
+            setSessionStartSeconds(null);
+            setIsRunning(false);
 
-            if (newSession >= 4) {
-                setPomodoroPhase("longBreak");
-                setSeconds(pomodoroLongBreakMinutes * 60);
+            if (mode === "focus") {
                 return;
             }
 
-            setPomodoroPhase("break");
-            setSeconds(pomodoroBreakMinutes * 60);
-            return;
-        }
+            // Pomodoro
+            if (pomodoroPhase === "focus") {
+                const newSession = pomodoroSession + 1;
 
-        if (pomodoroPhase === "break") {
-            setPomodoroPhase("focus");
-            setSeconds(pomodoroFocusMinutes * 60);
-            return;
-        }
+                setPomodoroSession(newSession);
 
-        if (pomodoroPhase === "longBreak") {
-            setPomodoroSession(0);
-            setPomodoroPhase("focus");
-            setSeconds(pomodoroFocusMinutes * 60);
-            setIsRunning(false);
-        }
+                if (newSession >= 4) {
+                    setPomodoroPhase("longBreak");
+                    setSeconds(pomodoroLongBreakMinutes * 60);
+                    setIsRunning(true);
+                    setSessionStartSeconds(
+                        pomodoroLongBreakMinutes * 60
+                    );
+                    return;
+                }
+
+                setPomodoroPhase("break");
+                setSeconds(pomodoroBreakMinutes * 60);
+                setIsRunning(true);
+                setSessionStartSeconds(pomodoroBreakMinutes * 60);
+                return;
+            }
+
+            if (pomodoroPhase === "break") {
+                setPomodoroPhase("focus");
+                setSeconds(pomodoroFocusMinutes * 60);
+                setIsRunning(true);
+                setSessionStartSeconds(pomodoroFocusMinutes * 60);
+                return;
+            }
+
+            if (pomodoroPhase === "longBreak") {
+                setPomodoroSession(0);
+                setPomodoroPhase("focus");
+                setSeconds(pomodoroFocusMinutes * 60);
+                setIsRunning(false);
+                setSessionStartSeconds(null);
+            }
+        };
+
+        finishTimer();
     }, [
         seconds,
         isRunning,
@@ -97,10 +151,8 @@ function Timer() {
         pomodoroSession,
         pomodoroFocusMinutes,
         pomodoroBreakMinutes,
-        pomodoroLongBreakMinutes
+        pomodoroLongBreakMinutes,
     ]);
-
-    
 
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -111,6 +163,8 @@ function Timer() {
 
     const changeMode = (newMode: TimerMode) => {
         setIsRunning(false);
+        setSessionStartSeconds(null);
+
         setMode(newMode);
         setPomodoroSession(0);
         setPomodoroPhase("focus");
@@ -122,16 +176,38 @@ function Timer() {
         }
     };
 
-    const toggleTimer = () => {
-        if (seconds === 0) {
-            setSeconds(getCurrentDuration());
+    const toggleTimer = async () => {
+        // PAUSE
+        if (isRunning) {
+            await saveCurrentSession();
+
+            setSessionStartSeconds(null);
+            setIsRunning(false);
+
+            return;
         }
 
-        setIsRunning((current) => !current);
+        // COMMENCER / REPRENDRE
+        if (seconds === 0) {
+            const duration = getCurrentDuration();
+
+            setSeconds(duration);
+            setSessionStartSeconds(duration);
+        } else {
+            setSessionStartSeconds(seconds);
+        }
+
+        setIsRunning(true);
     };
 
-    const resetTimer = () => {
+    const resetTimer = async () => {
+        // Si le timer tourne, on sauvegarde le temps travaillé
+        if (isRunning) {
+            await saveCurrentSession();
+        }
+
         setIsRunning(false);
+        setSessionStartSeconds(null);
 
         if (mode === "focus") {
             setSeconds(focusMinutes * 60);
@@ -150,6 +226,7 @@ function Timer() {
         if (mode === "focus") {
             setSeconds(newDuration * 60);
             setIsRunning(false);
+            setSessionStartSeconds(null);
         }
     };
 
@@ -161,18 +238,26 @@ function Timer() {
         if (mode === "pomodoro" && pomodoroPhase === "focus") {
             setSeconds(newDuration * 60);
             setIsRunning(false);
+            setSessionStartSeconds(null);
         }
     };
 
-    const changePomodoroBreakDuration = (value: number, isLong: boolean) => {
+    const changePomodoroBreakDuration = (
+        value: number,
+        isLong: boolean
+    ) => {
         const newDuration = Math.max(1, value || 1);
 
         if (isLong) {
             setPomodoroLongBreakMinutes(newDuration);
 
-            if (mode === "pomodoro" && pomodoroPhase === "longBreak") {
+            if (
+                mode === "pomodoro" &&
+                pomodoroPhase === "longBreak"
+            ) {
                 setSeconds(newDuration * 60);
                 setIsRunning(false);
+                setSessionStartSeconds(null);
             }
 
             return;
@@ -180,9 +265,13 @@ function Timer() {
 
         setPomodoroBreakMinutes(newDuration);
 
-        if (mode === "pomodoro" && pomodoroPhase === "break") {
+        if (
+            mode === "pomodoro" &&
+            pomodoroPhase === "break"
+        ) {
             setSeconds(newDuration * 60);
             setIsRunning(false);
+            setSessionStartSeconds(null);
         }
     };
 
@@ -214,6 +303,39 @@ function Timer() {
                     </ToggleButton>
                 </ToggleButtonGroup>
 
+                {/* CATÉGORIE */}
+                <div className="category-selector">
+                    <label htmlFor="category">
+                        Catégorie
+                    </label>
+
+                    <select
+                        id="category"
+                        value={categoryId ?? ""}
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            setCategoryId(
+                                value === "" ? null : Number(value)
+                            );
+                        }}
+                        disabled={isRunning}
+                    >
+                        <option value="">
+                            Sans catégorie
+                        </option>
+
+                        {categories.map((category) => (
+                            <option
+                                key={category.id}
+                                value={category.id}
+                            >
+                                {category.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
                 <p className="eyebrow">
                     {mode === "focus"
                         ? "SESSION DE CONCENTRATION"
@@ -224,7 +346,11 @@ function Timer() {
                                 : "POMODORO · LONGUE PAUSE"}
                 </p>
 
-                <div className={`timer ${isRunning ? "timer-running" : ""}`}>
+                <div
+                    className={`timer ${
+                        isRunning ? "timer-running" : ""
+                    }`}
+                >
                     {formattedTime}
                 </div>
 
@@ -266,8 +392,11 @@ function Timer() {
 
                         <div className="duration-control">
                             <button
+                                disabled={isRunning}
                                 onClick={() =>
-                                    changeFocusDuration(focusMinutes - 5)
+                                    changeFocusDuration(
+                                        focusMinutes - 5
+                                    )
                                 }
                             >
                                 −
@@ -276,8 +405,11 @@ function Timer() {
                             <span>{focusMinutes} min</span>
 
                             <button
+                                disabled={isRunning}
                                 onClick={() =>
-                                    changeFocusDuration(focusMinutes + 5)
+                                    changeFocusDuration(
+                                        focusMinutes + 5
+                                    )
                                 }
                             >
                                 +
@@ -388,7 +520,11 @@ function Timer() {
             <section className="tasks-card">
                 <TodoList />
             </section>
-            <nav className="floating-nav" aria-label="Navigation secondaire">
+
+            <nav
+                className="floating-nav"
+                aria-label="Navigation secondaire"
+            >
                 <button
                     className="floating-nav-button"
                     onClick={() => navigate("settings")}
@@ -412,4 +548,3 @@ function Timer() {
 }
 
 export default Timer;
-

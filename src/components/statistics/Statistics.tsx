@@ -1,12 +1,29 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import type { Session } from "../../types";
+import { getSessions } from "../../services/session_service";
 
-function Statistics(){
+function Statistics() {
+    const [sessions, setSessions] = useState<Session[]>([]);
     const navigate = useNavigate();
-    return(
+
+    useEffect(() => {
+        getSessions().then(setSessions);
+    }, []);
+
+    return (
         <>
-        <button onClick={() => navigate(-1)}>
-            X
-        </button>
+            <button onClick={() => navigate(-1)}>
+                X
+            </button>
+
+            <div>
+                {sessions.map((session) => (
+                    <div key={session.id}>
+                        <span>{session.duration}</span>
+                    </div>
+                ))}
+            </div>
         </>
     );
 }
