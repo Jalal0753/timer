@@ -37,7 +37,7 @@ export async function addCategory(name: string, color: string): Promise<number> 
     const database = await getDb();
 
     const result = await database.execute(
-        `INSERT INTO categories (name) VALUES ($1, $2)`,
+        `INSERT INTO categories (name, color) VALUES ($1, $2)`,
         [name.trim(), color]
     );
 
