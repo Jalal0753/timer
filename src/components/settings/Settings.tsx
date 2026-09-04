@@ -9,14 +9,24 @@ import {
 import "./Settings.css";
 
 const COLORS = [
-    "#EF4444",
-    "#F97316",
-    "#EAB308",
-    "#22C55E",
-    "#06B6D4",
-    "#3B82F6",
-    "#8B5CF6",
-    "#EC4899",
+    "#EF4444", // Rouge
+    "#F97316", // Orange
+    "#EAB308", // Jaune
+    "#84CC16", // Lime
+    "#22C55E", // Vert
+    "#10B981", // Émeraude
+    "#06B6D4", // Cyan
+    "#3B82F6", // Bleu
+    "#8B5CF6", // Violet
+    "#A855F7", // Pourpre
+    "#D946EF", // Fuchsia
+    "#EC4899", // Rose
+    "#F59E0B", // Ambre
+    "#D97706", // Orange foncé
+    "#65A30D", // Vert olive
+    "#059669", // Vert profond
+    "#2563EB", // Bleu profond
+    "#7C3AED", // Violet profond
 ];
 
 function Settings() {
@@ -70,14 +80,7 @@ function Settings() {
 
                 <section className="settings-section">
                     <div className="section-heading">
-                        <div>
-                            <p className="section-label">
-                                ORGANISATION
-                            </p>
-
                             <h2>Catégories</h2>
-                        </div>
-
                         <span className="section-count">
                             {categories.length}
                         </span>
