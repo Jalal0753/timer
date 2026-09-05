@@ -37,6 +37,21 @@ export async function initDatabase() {
     `);
 }
 
+export async function resetDatabase() {
+     const database = await getDb();
+
+    await database.execute(`
+        DELETE FROM categories 
+    `);
+    await database.execute(`
+        DELETE FROM sessions 
+    `);
+    await database.execute(`
+        DELETE FROM sqlite_sequence
+        WHERE name IN ('categories', 'sessions')
+    `);
+}
+
 export async function getCategories(): Promise<Category[]> {
     const database = await getDb();
 
