@@ -35,20 +35,46 @@ export async function initDatabase() {
                 ON DELETE SET NULL
         )
     `);
+
+    await database.execute(`
+        CREATE TABLE IF NOT EXISTS tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            description TEXT NOT NULL,
+            session_id INTEGER NOT NULL,
+
+            FOREIGN KEY (session_id)
+                REFERENCES sessions(id)
+                ON DELETE CASCADE
+        )
+    `);
+
+    const taskColumns = await database.select<{ name: string }[]>(
+        `PRAGMA table_info(tasks)`
+    );
+
+    if (!taskColumns.some((column) => column.name === "description")) {
+        await database.execute(`
+            ALTER TABLE tasks
+            ADD COLUMN description TEXT NOT NULL DEFAULT ''
+        `);
+    }
 }
 
 export async function resetDatabase() {
      const database = await getDb();
 
     await database.execute(`
-        DELETE FROM categories 
+        DELETE FROM tasks
     `);
     await database.execute(`
-        DELETE FROM sessions 
+        DELETE FROM categories
+    `);
+    await database.execute(`
+        DELETE FROM sessions
     `);
     await database.execute(`
         DELETE FROM sqlite_sequence
-        WHERE name IN ('categories', 'sessions')
+        WHERE name IN ('categories', 'sessions', 'tasks')
     `);
 }
 

@@ -1,8 +1,12 @@
 import Database from "@tauri-apps/plugin-sql";
-import type { Session } from "../types";
+import type { Session, Task } from "../types";
+
+async function getDb() {
+  return await Database.load("sqlite:study.db");
+}
 
 export async function getSessions(): Promise<Session[]> {
-  const database = await Database.load("sqlite:study.db");
+  const database = await getDb();
 
   const result = await database.select<Session[]>(
     `
@@ -16,7 +20,7 @@ export async function addSession(
   categoryId: number | null,
   duration: number,
 ): Promise<number> {
-  const database = await Database.load("sqlite:study.db");
+  const database = await getDb();
 
   const result = await database.execute(
     `
@@ -27,4 +31,49 @@ export async function addSession(
   );
 
   return result.lastInsertId ?? 0;
+}
+
+export async function getTasks(sessionId?: number): Promise<Task[]> {
+  const database = await getDb();
+
+  if (sessionId === undefined) {
+    return await database.select<Task[]>(`
+      SELECT id, description, session_id
+      FROM tasks
+      ORDER BY id ASC
+    `);
+  }
+
+  return await database.select<Task[]>(
+    `
+      SELECT id, description, session_id
+      FROM tasks
+      WHERE session_id = $1
+      ORDER BY id ASC
+    `,
+    [sessionId],
+  );
+}
+
+export async function addTask(
+  description: string,
+  sessionId: number,
+): Promise<number> {
+  const database = await getDb();
+
+  const result = await database.execute(
+    `INSERT INTO tasks (description, session_id) VALUES ($1, $2)`,
+    [description.trim(), sessionId],
+  );
+
+  return result.lastInsertId ?? 0;
+}
+
+export async function removeTask(id: number): Promise<void> {
+  const database = await getDb();
+
+  await database.execute(
+    `DELETE FROM tasks WHERE id = $1`,
+    [id],
+  );
 }

@@ -10,3 +10,9 @@ export interface Session {
     started_at: string;
     duration: number;
 }
+
+export interface Task {
+    id: number;
+    description: string;
+    session_id: number;
+};
