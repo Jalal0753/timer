@@ -1,18 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { addTask, getTasks, removeTask } from "../../services/session_service";
+import type { Task } from "../../types";
 
 function TodoList() {
     const [newTask, setNewTask] = useState("");
-    const [tasks, setTasks] = useState<string[]>([]);
+    const [tasks, setTasks] = useState<Task[]>([]);
 
-    const addTask = () => {
+    useEffect(() => {
+        getTasks().then(setTasks);
+    }, []);
+
+    const handleaAddTask = async () => {
         if (newTask.trim() === "") return;
 
-        setTasks([...tasks, newTask.trim()]);
+        await addTask(newTask);
+        setTasks(await getTasks());
         setNewTask("");
     };
 
-    const deleteTask = (index: number) => {
-        setTasks(tasks.filter((_, i) => i !== index));
+    const deleteTask = async (id: number) => {
+        await removeTask(id);
+        setTasks(await getTasks());
     };
 
     return (
@@ -36,12 +44,12 @@ function TodoList() {
                     onChange={(e) => setNewTask(e.target.value)}
                     onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                            addTask();
+                            handleaAddTask();
                         }
                     }}
                 />
 
-                <button onClick={addTask} aria-label="Ajouter la tâche">
+                <button onClick={handleaAddTask} aria-label="Ajouter la tâche">
                     +
                 </button>
             </div>
@@ -53,18 +61,18 @@ function TodoList() {
                         Rien à faire pour l’instant.
                     </li>
                 ) : (
-                    tasks.map((task, index) => (
-                        <li className="task" key={index}>
+                    tasks.map((task) => (
+                        <li className="task" key={task.id}>
                             <span className="task-dot" />
 
                             <span className="task-text">
-                                {task}
+                                {task.description}
                             </span>
 
                             <button
                                 className="delete-task"
-                                onClick={() => deleteTask(index)}
-                                aria-label={`Supprimer ${task}`}
+                                onClick={() => deleteTask(task.id)}
+                                aria-label={`Supprimer ${task.description}`}
                             >
                                 ×
                             </button>

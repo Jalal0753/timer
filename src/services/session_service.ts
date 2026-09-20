@@ -33,37 +33,24 @@ export async function addSession(
   return result.lastInsertId ?? 0;
 }
 
-export async function getTasks(sessionId?: number): Promise<Task[]> {
+export async function getTasks(): Promise<Task[]> {
   const database = await getDb();
 
-  if (sessionId === undefined) {
     return await database.select<Task[]>(`
-      SELECT id, description, session_id
+      SELECT id, description
       FROM tasks
       ORDER BY id ASC
     `);
-  }
-
-  return await database.select<Task[]>(
-    `
-      SELECT id, description, session_id
-      FROM tasks
-      WHERE session_id = $1
-      ORDER BY id ASC
-    `,
-    [sessionId],
-  );
 }
 
 export async function addTask(
   description: string,
-  sessionId: number,
 ): Promise<number> {
   const database = await getDb();
 
   const result = await database.execute(
-    `INSERT INTO tasks (description, session_id) VALUES ($1, $2)`,
-    [description.trim(), sessionId],
+    `INSERT INTO tasks (description) VALUES ($1)`,
+    [description.trim()],
   );
 
   return result.lastInsertId ?? 0;

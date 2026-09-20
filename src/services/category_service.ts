@@ -39,12 +39,7 @@ export async function initDatabase() {
     await database.execute(`
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            description TEXT NOT NULL,
-            session_id INTEGER NOT NULL,
-
-            FOREIGN KEY (session_id)
-                REFERENCES sessions(id)
-                ON DELETE CASCADE
+            description TEXT NOT NULL
         )
     `);
 

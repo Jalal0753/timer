@@ -14,5 +14,4 @@ export interface Session {
 export interface Task {
     id: number;
     description: string;
-    session_id: number;
 };
