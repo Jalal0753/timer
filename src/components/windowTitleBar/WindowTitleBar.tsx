@@ -6,10 +6,11 @@ import RestoreIcon from "@mui/icons-material/FilterNone";
 import CloseIcon from "@mui/icons-material/Close";
 import "./WindowTitleBar.css";
 
-const window = getCurrentWindow();
 
 function WindowTitleBar() {
     const [isMaximized, setIsMaximized] = useState(false);
+    const window = getCurrentWindow();
+
 
     useEffect(() => {
         window.isMaximized().then(setIsMaximized);
