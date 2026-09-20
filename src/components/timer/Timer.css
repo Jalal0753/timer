@@ -28,7 +28,7 @@ button {
 /* ========================= APP ========================= */
 .study-app {
     position: relative;
-    min-height: 100vh;
+    min-height: calc(100vh - 38px);
     padding: 70px 24px 45px;
     display: flex;
     flex-direction: row;

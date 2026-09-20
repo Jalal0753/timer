@@ -1,6 +1,6 @@
 .stats-page {
     position: relative;
-    min-height: 100vh;
+    min-height: calc(100vh - 38px);
     padding: 55px 24px 70px;
     overflow: hidden;
     color: #e9e1d3;

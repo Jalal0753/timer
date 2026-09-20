@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom"
 import { useEffect } from "react";
 import { initDatabase } from "../services/category_service";
+import WindowTitleBar from "./windowTitleBar/WindowTitleBar";
 
 
 
@@ -12,7 +13,10 @@ function App() {
 
   return (
     <>
-    <Outlet/>
+      <WindowTitleBar />
+      <div className="app-content">
+        <Outlet />
+      </div>
     </>
   )
 }
